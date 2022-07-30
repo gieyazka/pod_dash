@@ -10,8 +10,6 @@ import style from "../styles/bg.module.css";
 
 const Home: NextPage = () => {
     const auth = getAuth(app);
-
-    
   
     
   return (

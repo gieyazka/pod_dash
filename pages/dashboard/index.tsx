@@ -1,25 +1,15 @@
-import { app, database } from '../firebaseConfig';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
 import Head from "next/head";
 import Image from "next/image";
 import type { NextPage } from "next";
-import { getAnalytics } from "firebase/analytics";
-import { initializeApp } from 'firebase/app';
-import style from "../styles/bg.module.css";
+import style from "../../styles/bg.module.css";
 
-const Home: NextPage = () => {
-    const auth = getAuth(app);
-
-    
-  
-    
+const LoginPage: NextPage = () => {
   return (
     <div className={`${style.header} m-0 h-screen `}>
       <div >
         <div className="grid grid-cols-1 gap-y-1 inner-header justify-center items-center text-center flex">
           <div className="">
-            <h1>Map lants</h1>
+            <h1>Sensitive Data</h1>
           </div>
 
           <div className="">
@@ -71,4 +61,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default LoginPage;
