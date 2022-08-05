@@ -134,7 +134,7 @@ const LoginPage: NextPage = () => {
 
       <div className="absolute bottom-0 w-full ">
         <svg
-          className={style.waves + " absolute bottom-0"}
+          className={style.waves + " absolute bottom-0 left-0"}
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
           viewBox="0 24 150 28"
