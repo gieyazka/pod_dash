@@ -9,10 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/material": "^5.9.3",
     "firebase": "^9.9.1",
-    "next": "12.2.3",
+    "framer-motion": "^6.5.1",
+    "material-react-table": "^0.32.2",
+    "million": "^1.12.3-beta.3",
+    "next": "^12.2.4",
+    "next-i18next": "^11.3.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-icons": "^4.4.0"
   },
   "devDependencies": {
     "@types/node": "18.6.2",

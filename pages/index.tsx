@@ -1,74 +1,147 @@
-import { app, database } from '../firebaseConfig';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { AuthUserContext, NextPageWithLayout, StateContext } from "./_app";
+import {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { app, database } from "../firebaseConfig";
+import { collection, doc, getDocs } from "firebase/firestore";
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 import Head from "next/head";
+import Header from "../components/Layout";
 import Image from "next/image";
+import Link from "next/link";
+import MaterialReactTable from "material-react-table";
 import type { NextPage } from "next";
+import TestPage from "./test";
 import { getAnalytics } from "firebase/analytics";
-import { initializeApp } from 'firebase/app';
+import { initializeApp } from "firebase/app";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import style from "../styles/bg.module.css";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
-const Home: NextPage = () => {
-    const auth = getAuth(app);
+const Home: NextPageWithLayout = () => {
+  // const { t } = useTranslation('common');
+  const [test, setTest, t, i18n] = useContext(AuthUserContext);
 
-    
-  
-    
+  const [state, setState] = useContext(StateContext);
+  const auth = getAuth(app);
+  useEffect(() => {
+    setState({ test: "123isdkofhdsf" });
+  }, []);
+  useEffect(() => {
+    getData();
+  }, []);
+  const getData = async () => {
+    const taskRef = collection(database, "Tasks");
+    // const docRef = doc(database, "Tasks");
+
+    console.log(taskRef);
+
+    const docSnap = await getDocs(taskRef);
+
+    // docSnap.forEach((doc) => {
+    //   // doc.data() is never undefined for query doc snapshots
+    //   console.log(doc.id, " => ", doc.data());
+    // });
+  };
+  const router = useRouter();
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "name", //simple recommended way to define a column
+        header: "Name",
+        muiTableHeadCellProps: { sx: { color: "green" } }, //custom props
+      },
+      {
+        accessorFn: (row: { age: any,name : any }) => row.age + row.name, //alternate way
+        id: "age", //id required if you use accessorFn instead of accessorKey
+        header: "Age",
+        Header: <i style={{ color: "red" }}>Age</i>, //optional custom markup
+      },
+    ],
+    []
+  );
+
+  const data = useMemo(
+    () => [
+      {
+        name: "John",
+        age: 30,
+      },
+      {
+        name: "Sara",
+        age: 25,
+      },
+    ],
+    []
+  );
+
+  //optionally, you can manage any/all of the table state yourself
+  const [rowSelection, setRowSelection] = useState({});
+
+  useEffect(() => {
+    //do something when the row selection changes
+  }, [rowSelection]);
+
   return (
-    <div className={`${style.header} m-0 h-screen `}>
-      <div >
-        <div className="grid grid-cols-1 gap-y-1 inner-header justify-center items-center text-center flex">
-          <div className="">
-            <h1>Map lants</h1>
-          </div>
+    // <CreateProvider>
 
-          <div className="">
-            <h2>Comming soon</h2>
-          </div>
-        </div>
-        </div>
-     
-        <div className="absolute bottom-0 w-full ">
-          <svg
-            className={style.waves + " absolute bottom-0" }
-            xmlns="http://www.w3.org/2000/svg"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
-            viewBox="0 24 150 28"
-            preserveAspectRatio="none"
-            shapeRendering="auto"
-          >
-            <defs>
-              <path
-                id="gentle-wave"
-                d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
-              />
-            </defs>
-            <g className={style.parallax}>
-              <use
-                xlinkHref="#gentle-wave"
-                x="48"
-                y="0"
-                fill="rgba(255,255,255,0.7"
-              />
-              <use
-                xlinkHref="#gentle-wave"
-                x="48"
-                y="3"
-                fill="rgba(255,255,255,0.5)"
-              />
-              <use
-                xlinkHref="#gentle-wave"
-                x="48"
-                y="5"
-                fill="rgba(255,255,255,0.3)"
-              />
-              <use xlinkHref="#gentle-wave" x="48" y="7" fill="#fff" />
-            </g>
-          </svg>
-        </div>
+    <div>
+      {/* <Header /> */}
+      <Link href="/" locale={router.locale === "en" ? "th" : "en"}>
+        <button>
+          {t("change-locale", {
+            changeTo: router.locale === "en" ? "th" : "en",
+          })}
+        </button>
+      </Link>
+      wowza
+      <button onClick={() => signOut(auth)}> {t("hello")}</button>
+      <Link href={"/test"}>
+        <button>Link</button>
+      </Link>
+      <div className="p-4">
+        <MaterialReactTable
+          //@ts-ignored
+          columns={columns}
+          data={data}
+          enableColumnOrdering //enable some features
+          enableRowSelection
+          enableStickyHeader
+          onRowSelectionChange={setRowSelection} //hoist internal state to your own state (optional)
+          state={{ rowSelection }} //manage your own state, pass it back to the table (optional)
+        />
       </div>
-    // </div>
+    </div>
+
+    // </CreateProvider>
   );
 };
+export async function getServerSideProps ({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+      // Will be passed to the page component as props
+    },
+  };
+}
+// Home.getLayout = function getLayout(page: ReactElement) {
+//   console.log(page);
 
+//   return (
+//     <div>
+//       <Header />
+//       {page}
+
+//     </div>
+//   )
+// }
 export default Home;

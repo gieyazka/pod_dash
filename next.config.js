@@ -1,30 +1,10 @@
 /** @type {import('next').NextConfig} */
+const { i18n } = require('./next-i18next.config');
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // i18n: {
-
-  //   locales: ['default','en-US', 'th-TH'],
-  //   defaultLocale: 'default',
-  //   // localeDetection: false,
-
-  //   domains: [
-  //     {
-  //       domain: 'example.com',
-  //       defaultLocale: 'en-US',
-  //     },
-  //     {
-  //       domain: 'example.nl',
-  //       defaultLocale: 'th-TH',
-  //     },
-  //     {
-  //       domain: 'example.fr',
-  //       defaultLocale: 'fr',
-
-  //       http: true,
-  //     },
-  //   ],
-  // },
+  i18n
+  
 }
 
 module.exports = nextConfig
