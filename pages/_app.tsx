@@ -63,6 +63,8 @@ const CreateProvider = ({ children }: any) => {
     auth.onAuthStateChanged((fireAuth) => {
       if (fireAuth?.email != null) {
         setUser({ authUser: fireAuth.email, loading: false });
+        console.log(66,router.pathname);
+        
         // setLoading(false);
         if (router.pathname === "/login") {
           router.replace("/");
@@ -75,6 +77,9 @@ const CreateProvider = ({ children }: any) => {
       }
     });
   };
+console.log(!user.loading ,
+  router.pathname === "/login" ,
+  user.authUser !== null,user.authUser);
 
   return (
     <AuthUserContext.Provider value={[user, setUser,t,i18n]}>
