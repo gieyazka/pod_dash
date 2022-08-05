@@ -17,8 +17,9 @@ import Head from "next/head";
 import Header from "../components/Layout";
 import Image from "next/image";
 import Link from "next/link";
-import MaterialReactTable from "material-react-table";
+// import  MaterialReactTable from "material-react-table";
 import type { NextPage } from "next";
+import React from "react";
 import TestPage from "./test";
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
@@ -27,6 +28,7 @@ import style from "../styles/bg.module.css";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
+const MaterialReactTable = React.lazy(() => import('material-react-table'));
 const Home: NextPageWithLayout = () => {
   // const { t } = useTranslation('common');
   const [test, setTest, t, i18n] = useContext(AuthUserContext);
@@ -125,7 +127,7 @@ const Home: NextPageWithLayout = () => {
     // </CreateProvider>
   );
 };
-export async function getServerSideProps ({ locale }: any) {
+export async function getStaticProps({ locale }: any) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
