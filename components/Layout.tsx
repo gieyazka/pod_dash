@@ -5,7 +5,7 @@ import { getAuth, signOut } from "firebase/auth";
 
 import { AiOutlineLogout } from "react-icons/ai";
 import { AuthUserContext } from "../pages/_app";
-import { Hamburger } from "../assets/hambergerIcon.js";
+import { Hamburger } from "./hambergerIcon.js";
 import Link from "next/link";
 import { MenuItem } from "./menuItem";
 import { TbReportAnalytics } from "react-icons/tb";
@@ -27,24 +27,25 @@ const Header = ({ open, headSize }: any) => {
   const auth = getAuth(app);
   return (
     <motion.div
-    initial={{
-      width: `calc(100vw - 64px)`
-    }}
+      // style={{width: `calc(100vw - ${headSize})`}}
+      initial={{
+        width: `calc(100vw - ${"64px"})`,
+      }}
       animate={{
+        
         width: `calc(100vw - ${headSize})`,
+        maxWidth: `calc(100vw - ${headSize})`,
       }}
     >
       <motion.div
         className={`flex bg-red-400 items-center    justify-between `}
       >
         <p className="ml-4 text-lg">App Name</p>
-        <div className="flex items-center mr-4 cursor-pointer">
-          
-        <AiOutlineLogout
-        size={32}
-        className="mr-1 "
-        onClick={() => logout()}
-        /> Logout
+        <div
+          className="flex items-center mr-4 cursor-pointer"
+          onClick={() => logout()}
+        >
+          <AiOutlineLogout size={32} className="mr-1 " /> Logout
         </div>
       </motion.div>
     </motion.div>
@@ -59,9 +60,11 @@ const Sidebar = ({ children }: any) => {
       <motion.div
         className={` h-screen bg-orange-600
       } flex flex-col `}
-      initial={{width :'64px'}}
+        initial={{ width: '64px', }}
+
         animate={{
-          width: openWidth,
+          maxWidth: openWidth,
+          width : openWidth
         }}
       >
         {/* <AnimatePresence> */}
@@ -80,10 +83,22 @@ const Sidebar = ({ children }: any) => {
         {/* <p>Dashboard</p> */}
         {/* <p>asdsads</p> */}
       </motion.div>
-      <div className="flex flex-col">
-        <Header open={open} headSize={openWidth} />
-
-        {children}
+      <div>
+        <div className={`flex flex-col  w`}>
+          <Header open={open} headSize={openWidth} />
+          <div
+            style={{
+              // here
+              maxWidth: `calc(100vw - ${openWidth}) `,
+              maxHeight: `calc(100vh - 64px)`,
+            //   width: `calc(100vw - ${openWidth}) `,
+            //  height: `calc(100vh - 64px)`,
+              // here
+            }}
+          >
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );

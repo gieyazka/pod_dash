@@ -6,6 +6,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import Router, { useRouter } from "next/router";
@@ -27,12 +28,9 @@ interface authContextInterface {
 interface stateInterface {
   test?: string | null;
 }
-export const AuthUserContext = createContext<[authContextInterface, any,any,any]>([
-  { authUser: null, loading: true },
-  () => {},
-  () => {},
-  null
-]);
+export const AuthUserContext = createContext<
+  [authContextInterface, any]
+>([{ authUser: null, loading: true }, () => {}]);
 
 export const StateContext = createContext<[stateInterface, any]>([
   {},
@@ -40,9 +38,23 @@ export const StateContext = createContext<[stateInterface, any]>([
 ]);
 
 const CreateProvider = ({ children }: any) => {
-  const [user, setUser] = useState<authContextInterface>({
-    loading: true,
-    authUser: null,
+  // const [user, setUser] = useState<authContextInterface>({
+  //   loading: true,
+  //   authUser: null,
+  // });
+
+  const [user, setUser] = useState<authContextInterface>(() => {
+    const auth = getAuth(app);
+      if(auth.currentUser?.email){
+        return {
+          loading: false,
+          authUser: auth.currentUser?.email,
+        };
+      }
+    return {
+      loading: true,
+      authUser: null,
+    };
   });
 
   const router = useRouter();
@@ -50,40 +62,41 @@ const CreateProvider = ({ children }: any) => {
     test: null,
   });
   useEffect(() => {
+    let isMounted = true;
+    const getUser = async () => {
+      const auth = getAuth(app);
+      auth.onAuthStateChanged((fireAuth) => {
+        if (fireAuth?.email != null) {
+          setUser({ authUser: fireAuth.email, loading: false });
+          // setLoading(false);
+          if (router.pathname === "/login") {
+            router.replace("/");
+          }
+          // router.push('/')
+        } else {
+          setUser({ authUser: null, loading: false });
+
+          // router.push("/login")
+        }
+      });
+    };
     getUser();
+    return () => {
+      isMounted = false;
+    };
   }, []);
   useEffect(() => {
     if (!user.loading && user.authUser === null) {
       router.replace("/login");
     }
   }, [user.loading]);
-  const { t ,i18n} = useTranslation("common");
-  const getUser = async () => {
-    const auth = getAuth(app);
-    auth.onAuthStateChanged((fireAuth) => {
-      if (fireAuth?.email != null) {
-        setUser({ authUser: fireAuth.email, loading: false });
-        console.log(66,router.pathname);
-        
-        // setLoading(false);
-        if (router.pathname === "/login") {
-          router.replace("/");
-        }
-        // router.push('/')
-      } else {
-        setUser({ authUser: null, loading: false });
 
-        // router.push("/login")
-      }
-    });
-  };
-console.log(!user.loading ,
-  router.pathname === "/login" ,
-  user.authUser !== null,user.authUser);
+  const { t, i18n } = useTranslation("common");
+
 
   return (
-    <AuthUserContext.Provider value={[user, setUser,t,i18n]}>
-      <Head >
+    <AuthUserContext.Provider value={[user, setUser]}>
+      <Head>
         <title>POD</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
@@ -102,7 +115,7 @@ console.log(!user.loading ,
     </AuthUserContext.Provider>
   );
 };
-export async function getServerSideProps({ locale }: any) {
+export async function getStaticProps({ locale }: any) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
@@ -120,11 +133,11 @@ type AppPropsWithLayout = AppProps & {
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
-  return getLayout(
+  return (
     <CreateProvider>
       <Component {...pageProps} />
     </CreateProvider>
   );
 }
-//@ts-ignored
+// @ts-ignored
 export default appWithTranslation(MyApp);

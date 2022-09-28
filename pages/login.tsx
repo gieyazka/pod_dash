@@ -42,7 +42,6 @@ const LoginPage: NextPage = () => {
         const user = userCredential.user
         if (user.email) {
           // localStorage.setItem("user", user.email)
-          console.log(router.route)
           // router.replace('/')
           // alert('login success')
         }
@@ -52,8 +51,9 @@ const LoginPage: NextPage = () => {
       .catch((error) => {
         const errorCode = error.code
         const errorMessage = error.message
+        console.log(errorMessage);
+        
       })
-    console.log(email, password)
   }
 
   return (
@@ -77,6 +77,7 @@ const LoginPage: NextPage = () => {
                     Email
                   </label>
                   <input
+                    defaultValue={'pokket.1@gmail.com'}
                     className="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="email"
                     type="text"
@@ -93,6 +94,7 @@ const LoginPage: NextPage = () => {
                     Password
                   </label>
                   <input
+                         defaultValue={'123456'}
                     className="shadow solid border-solid appearance-none border border-red-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                     id="password"
                     name="password"
